@@ -1,0 +1,51 @@
+{
+  "name": "easymanage-desktop",
+  "version": "1.0.0",
+  "description": "EasyManage Windows desktop wrapper for Google Apps Script",
+  "main": "main.js",
+  "author": "EasyManage",
+  "license": "MIT",
+  "repository": "https://github.com/ksvmnf-ops/easymanage_fixed.git",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win nsis portable",
+    "build:win:portable": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^45.3.3",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.easymanage.desktop",
+    "productName": "EasyManage",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "loading.html",
+      "config.example.json",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "config.json",
+        "to": "config.json",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": ["nsis", "portable"],
+      "artifactName": "EasyManage-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "EasyManage"
+    }
+  }
+}
