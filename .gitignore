@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+.env
+.env.*
+node_modules/
+
+# Local/editor files
+.vscode/
+.idea/
