@@ -510,13 +510,32 @@ body[data-theme="dark"] .pos kbd,body[data-theme="dark"] .pos-skbd{background:rg
   <div class="side-scroll">
     <nav class="nav-solo"><button data-act="home"><span class="ic"></span><span class="lb">الشاشة الرئيسية</span></button></nav>
 
-    <div class="nav-group" data-group="ops" data-title="المبيعات والمشتريات">
-      <div class="nav-title" role="button" tabindex="0" aria-expanded="true"><span>المبيعات والمشتريات</span><i class="chev"></i></div>
+    <div class="nav-group" data-group="sales" data-title="المبيعات">
+      <div class="nav-title" role="button" tabindex="0" aria-expanded="true"><span>المبيعات</span><i class="chev"></i></div>
       <nav>
-        <button data-tab="salesPanel"><span class="ic"></span><span class="lb">فاتورة بيع</span></button>
-        <button data-tab="purchasePanel"><span class="ic"></span><span class="lb">فاتورة شراء</span></button>
-        <button data-tab="returnsPanel"><span class="ic"></span><span class="lb">المرتجعات</span></button>
-        <button data-tab="invoicesPanel"><span class="ic"></span><span class="lb">الفواتير</span></button>
+        <button data-tab="salesPanel"><span class="ic"></span><span class="lb">فاتورة بيع جديدة</span></button>
+        <button data-tab="invoicesPanel" data-document-filter="sales_invoice"><span class="ic"></span><span class="lb">فواتير المبيعات</span></button>
+        <button data-tab="returnsPanel" data-return-type="sales_return"><span class="ic"></span><span class="lb">مرتجعات المبيعات</span></button>
+        <button data-tab="salesQueryPanel"><span class="ic"></span><span class="lb">تقارير المبيعات</span></button>
+      </nav>
+    </div>
+    <div class="nav-group" data-group="purchases" data-title="المشتريات">
+      <div class="nav-title" role="button" tabindex="0" aria-expanded="true"><span>المشتريات</span><i class="chev"></i></div>
+      <nav>
+        <button data-tab="purchasePanel"><span class="ic"></span><span class="lb">فاتورة شراء جديدة</span></button>
+        <button data-tab="invoicesPanel" data-document-filter="purchase_invoice"><span class="ic"></span><span class="lb">فواتير المشتريات</span></button>
+        <button data-tab="returnsPanel" data-return-type="purchase_return"><span class="ic"></span><span class="lb">مرتجعات المشتريات</span></button>
+        <button data-tab="purchaseQueryPanel"><span class="ic"></span><span class="lb">تقارير المشتريات</span></button>
+      </nav>
+    </div>
+    <div class="nav-group" data-group="parties" data-title="العملاء والموردون">
+      <div class="nav-title" role="button" tabindex="0" aria-expanded="true"><span>العملاء والموردون</span><i class="chev"></i></div>
+      <nav>
+        <button data-tab="masterPanel" data-master-type="Customers"><span class="ic"></span><span class="lb">العملاء</span></button>
+        <button data-tab="masterPanel" data-master-type="Suppliers"><span class="ic"></span><span class="lb">الموردون</span></button>
+        <button data-tab="masterPanel" data-master-type="Employees"><span class="ic"></span><span class="lb">الموظفون ومندوبو المبيعات</span></button>
+        <button data-tab="customerReportsPanel"><span class="ic"></span><span class="lb">تقارير العملاء</span></button>
+        <button data-tab="supplierReportsPanel"><span class="ic"></span><span class="lb">تقارير الموردين</span></button>
       </nav>
     </div>
 
@@ -1177,6 +1196,11 @@ matchMedia('(max-width:760px)').addEventListener('change',closeDrawer);
 const goTab=t=>{const b=document.querySelector('.sidebar button[data-tab="'+t+'"]');if(b)b.click()};
 const goHome=()=>{const b=document.querySelector('.sidebar button[data-act="home"]');if(b)b.click()};
 const goMaster=type=>{goTab('masterPanel');const s=$('masterType');s.value=type;try{masterEditingId=''}catch(e){}s.dispatchEvent(new Event('change'))};
+/* عناصر القوائم التي تفتح نوع سجل محدد داخل شاشة البيانات */
+document.querySelectorAll('.sidebar button[data-master-type]').forEach(b=>b.addEventListener('click',()=>{setTimeout(()=>{const s=$('masterType');if(s){s.value=b.dataset.masterType;s.dispatchEvent(new Event('change'))}},0)}));
+/* عناصر الفواتير التي تفتح القائمة مع نوع المستند المطلوب */
+document.querySelectorAll('.sidebar button[data-document-filter]').forEach(b=>b.addEventListener('click',()=>{setTimeout(()=>{const s=$('invoiceType');if(s){s.value=b.dataset.documentFilter;loadInvoices()}},0)}));
+document.querySelectorAll('.sidebar button[data-return-type]').forEach(b=>b.addEventListener('click',()=>{setTimeout(()=>{const s=$('returnType');if(s){s.value=b.dataset.returnType;s.dispatchEvent(new Event('change'))}},0)}));
 const QUICK=[
   {label:'فاتورة بيع جديدة',icon:'sales',run:()=>goTab('salesPanel')},
   {label:'فاتورة شراء جديدة',icon:'purchase',run:()=>goTab('purchasePanel')},
@@ -1253,7 +1277,7 @@ document.addEventListener('click',e=>{
 });
 
 /* الشاشة الرئيسية */
-const HOME_GROUPS=['ops','inv','fin','rep','data','sys'];
+const HOME_GROUPS=['sales','purchases','parties','inv','fin','rep','data','sys'];
 function buildHome(){
   const p=$('homePanel');
   const quick=[['salesPanel','sales','فاتورة بيع',0],['purchasePanel','purchase','فاتورة شراء',1],['receiptPanel','receipt','إيصال قبض',1],['paymentPanel','payment','إيصال صرف',1]];
